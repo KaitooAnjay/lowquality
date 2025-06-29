@@ -28,6 +28,7 @@ function registerObject(Object: Instance)
 		print("Registered BasePart:", RegisteredObject)
 	elseif Object:IsA("Texture") then
 		lockProperty(Object, "Texture", WhiteTexture)
+		lockProperty(Object, "Color3", Object.Color3:Lerp(Color3.new(0,0,0),0.5))
 	elseif Object:IsA("Atmosphere") then
 		lockProperty(Object, "Density", 0)
 		lockProperty(Object, "Offset", 0)
@@ -69,10 +70,7 @@ function registerObject(Object: Instance)
 		lockProperty(Object, "Texture", WhiteTexture)
 	elseif Object:IsA("ParticleEmitter") then
 		lockProperty(Object, "Texture", WhiteTexture)	
-	elseif Object:IsA("Shirt") then
-		--lockProperty(Object, "ShirtTemplate", WhiteTexture)
-	elseif Object:IsA("Pants") then
-		--lockProperty(Object, "PantsTemplate", WhiteTexture)
+	
 	end
 	
 	if checkProperty(Object,"Texture") then
@@ -82,6 +80,29 @@ function registerObject(Object: Instance)
 		end)
 	end
 end
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Billboard = Instance.new("BillboardGui")
+local Frame = Instance.new("Frame", Billboard)
+local UICorner = Instance.new("UICorner", Frame)
+UICorner.CornerRadius=Vector2.new(1,0)
+Frame.Size=UDim2.new(1,0,1,0)
+Billboard.AlwaysOnTop=true
+Billboard.Size=UDim2.new(0,25,0,25)
+Frame.BackgroundTransparency=0.7
+
+local Football = ReplicatedStorage:WaitForChild("Football") :: ObjectValue
+Billboard.Parent=Football.Value
+
+
+Football.Value:GetPropertyChangedSignal("Position"):Connect(function()
+	
+	local distance = (Football.Value.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
+	
+	Frame.BackgroundColor3=Color3.new(1, 0, 0):Lerp(Color3.new(0, 1, 0), math.clamp(distance/1000,0,1))
+	
+end)
+
 game.DescendantAdded:Connect(registerObject)
 -- Apply to all existing instances
 for i, v in game:GetDescendants() do

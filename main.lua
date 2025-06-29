@@ -14,6 +14,13 @@ local function lockProperty(instance, propertyName, lockedValue)
 	end)
 end
 
+local function checkProperty(instance, propertyName)
+	local success,result = pcall(function()
+		return instance[propertyName]
+	end)
+	return success and result or false
+end
+
 function registerObject(Object: Instance)
 	if Object:IsA("BasePart") then
 		lockProperty(Object, "Material", Enum.Material.Plastic)
@@ -63,10 +70,16 @@ function registerObject(Object: Instance)
 	elseif Object:IsA("ParticleEmitter") then
 		lockProperty(Object, "Texture", WhiteTexture)	
 	elseif Object:IsA("Shirt") then
-		lockProperty(Object, "ShirtTemplate", WhiteTexture)
+		--lockProperty(Object, "ShirtTemplate", WhiteTexture)
 	elseif Object:IsA("Pants") then
-		lockProperty(Object, "PantsTemplate", WhiteTexture)
-		
+		--lockProperty(Object, "PantsTemplate", WhiteTexture)
+	end
+	
+	if checkProperty(Object,"Texture") then
+		pcall(function()
+			print(Object.ClassName,"has","Texture Property")
+			Object["Texture"]=WhiteTexture
+		end)
 	end
 end
 game.DescendantAdded:Connect(registerObject)

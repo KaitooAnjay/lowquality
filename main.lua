@@ -89,7 +89,7 @@ UICorner.CornerRadius=UDim.new(1,0)
 Frame.Size=UDim2.new(1,0,1,0)
 Billboard.AlwaysOnTop=true
 Billboard.Size=UDim2.new(0,25,0,25)
-Frame.BackgroundTransparency=0.7
+Frame.BackgroundTransparency=0.5
 
 local Football = ReplicatedStorage:WaitForChild("Football") :: ObjectValue
 Billboard.Parent=Football.Value

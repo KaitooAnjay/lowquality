@@ -99,7 +99,7 @@ Football.Value:GetPropertyChangedSignal("Position"):Connect(function()
 	
 	local distance = (Football.Value.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
 	
-	Frame.BackgroundColor3=Color3.new(1, 0, 0):Lerp(Color3.new(0, 1, 0), math.clamp(distance/1000,0,1))
+	Frame.BackgroundColor3=Color3.new(1, 0, 0):Lerp(Color3.new(0, 1, 0), math.clamp(distance/500,0,1))
 	
 end)
 

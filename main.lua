@@ -1,17 +1,35 @@
 local WhiteTexture = "rbxassetid://124776870209623"
 local MaterialService = game:GetService("MaterialService")
 local Lighting = game:GetService("Lighting")
+local RunService = game:GetService("RunService")
 
 local RegisteredObject = 0
 
 -- Lock a property to a fixed value
+local blockLocking={"Trail", "ParticleEmitter", "Beam"}
 local function lockProperty(instance, propertyName, lockedValue)
 	instance[propertyName] = lockedValue
-	instance:GetPropertyChangedSignal(propertyName):Connect(function()
-		if instance[propertyName] ~= lockedValue then
-			instance[propertyName] = lockedValue
+	--[[
+	local blocked=false
+	for i,v in blockLocking do
+		if instance:IsA(v) then
+			blocked=true
+			break
 		end
-	end)
+	end
+	
+	if not blocked then
+		local rate = 0
+		instance:GetPropertyChangedSignal(propertyName):Connect(function()
+			rate+=1
+			if rate>=5 then
+				return
+			end
+			if instance[propertyName] ~= lockedValue then
+				instance[propertyName] = lockedValue
+			end
+		end)
+	end]]
 end
 
 local function checkProperty(instance, propertyName)
@@ -88,29 +106,32 @@ local UICorner = Instance.new("UICorner", Frame)
 UICorner.CornerRadius=UDim.new(1,0)
 Frame.Size=UDim2.new(1,0,1,0)
 Billboard.AlwaysOnTop=true
-Billboard.Size=UDim2.new(0,25,0,25)
+Billboard.Size=UDim2.new(0,12,0,12)
 Frame.BackgroundTransparency=0.5
 
 local Football = ReplicatedStorage:WaitForChild("Football") :: ObjectValue
 Billboard.Parent=Football.Value
 
+local Camera = workspace.CurrentCamera
 
-Football.Value:GetPropertyChangedSignal("Position"):Connect(function()
-	
-	local distance = (Football.Value.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
-	
-	Frame.BackgroundColor3=Color3.new(1, 0, 0):Lerp(Color3.new(0, 1, 0), math.clamp(distance/500,0,1))
+RunService.RenderStepped:Connect(function(deltaTime)
+	local distance = (Football.Value.Position - Camera.CFrame.Position).Magnitude
+	local Color = Color3.new(0, 1, 0)	
+
+	Frame.BackgroundColor3=Color:Lerp(Color3.new(1, 0, 0), 1-math.clamp(distance/100, 0 , 1))
 	
 end)
 
 game.DescendantAdded:Connect(registerObject)
 -- Apply to all existing instances
-for i, v in game:GetDescendants() do
-	registerObject(v)
-	if i % 100 == 0 then
-		task.wait()
+task.spawn(function()
+	for i, v in game:GetDescendants() do
+		registerObject(v)
+		if i % 100 == 0 then
+			task.wait()
+		end
 	end
-end
+end)
 
 -- Apply to newly added instances
 

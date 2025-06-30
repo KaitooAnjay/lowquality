@@ -110,9 +110,19 @@ Billboard.Size=UDim2.new(0,12,0,12)
 Frame.BackgroundTransparency=0.5
 
 local Football = ReplicatedStorage:WaitForChild("Football") :: ObjectValue
-Billboard.Parent=Football.Value
+local CurrentBillboard = Billboard:Clone()
+CurrentBillboard.Parent=Football.Value
+Frame=CurrentBillboard:FindFirstChildOfClass("Frame")
 
 local Camera = workspace.CurrentCamera
+Football:GetPropertyChangedSignal("Value"):Connect(function()
+	if CurrentBillboard then
+		CurrentBillboard:Destroy()
+	end
+	CurrentBillboard = Billboard:Clone()
+	CurrentBillboard.Parent=Football.Value
+	Frame=CurrentBillboard:FindFirstChildOfClass("Frame")
+end)
 
 RunService.RenderStepped:Connect(function(deltaTime)
 	local distance = (Football.Value.Position - Camera.CFrame.Position).Magnitude

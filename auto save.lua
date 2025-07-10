@@ -139,7 +139,7 @@ RunService.RenderStepped:Connect(function(deltaTime)
         if HRP and Humanoid then
             if (HRP.Position-Football.Value.Position).Magnitude<30 then
                 Humanoid.Jump=true
-                HRP.Position = HRP.Position:Lerp(Football.Value.Position,0.3)
+                HRP.CFrame = HRP.CFrame:Lerp(Football.Value.CFrame,0.5)
             end
         end
     end

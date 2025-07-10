@@ -135,8 +135,10 @@ RunService.RenderStepped:Connect(function(deltaTime)
     local Character = Player.Character
     if Character then
         local HRP = Character.PrimaryPart
-        if HRP then
+        local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+        if HRP and Humanoid then
             if (HRP.Position-Football.Value.Position).Magnitude<30 then
+                Humanoid.Jump=true
                 HRP.Position = HRP.Position:Lerp(Football.Value.Position,0.3)
             end
         end
